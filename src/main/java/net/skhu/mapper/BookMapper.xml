@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+             "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.skhu.mapper.BookMapper">
+
+
+<select id="findAll" resultMap="resultMap1" >
+	SELECT B.id,B.title,B.price,B.author,B.available,C.id categoryId,C.categoryName 
+	,P.id publisherId,P.title publisherTitle  
+	FROM (Book B JOIN Category C ON B.categoryId=C.id)
+	 JOIN Publisher P ON B.publisherId=P.id
+</select>	
+	<resultMap id="resultMap1" type="Book">
+    <id property="id" column="id" />
+    <result property="title" column="title" />
+    <result property="price" column="price" />
+    <result property="author" column="author" />
+    <result property="available" column="available" />
+    <association property="category" javaType="Category">
+      <id property="id" column="categoryId" />
+      <result property="categoryName" column="categoryName"/>
+    </association>
+    <association property="publisher" javaType="Publisher">
+      <id property="id" column="publisherId" />
+      <result property="title" column="publisherTitle"/>
+    </association>
+    
+  </resultMap>
+  
+  
+   <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+ 	INSERT BOOK 
+ 	(title,author,categoryId,
+ 	price,publisherId,available)
+ 	VALUES 
+ 	(#{title},#{author},#{category.id},
+ 	#{price},#{publisher.id},#{available}) 
+</insert>
+
+
+ <update id="update">
+ 	UPDATE BOOK SET 
+ 	title=#{title},
+ 	author=#{author},
+ 	categoryId=#{categoryId},
+ 	price=#{price},
+ 	publisherId=#{publisherId},
+ 	available=#{available}
+
+ 	WHERE id=#{id}
+ </update>
+ 
+ <delete id="delete">
+ DELETE FROM Book WHERE id=#{id}
+ </delete>
+  
+  
+<select id="findById" resultType="Book">
+SELECT B.*,C.id categoryId,C.categoryName ,P.id publisherId,P.title publisherTitle  FROM (Book B JOIN Category C ON B.categoryId=C.id) JOIN Publisher P ON B.publisherId=P.id  where B.id=#{id}
+
+</select>
+  
+  
+</mapper>
